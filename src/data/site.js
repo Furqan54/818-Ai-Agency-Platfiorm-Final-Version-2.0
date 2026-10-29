@@ -2,7 +2,7 @@
    818 AI Agency — all website text lives here.
    Change a sentence here, run `npm run build`, and every page is rebuilt.
    ========================================================================= */
- 
+
 export const site = {
   name: '818 AI Agency',
   short: '818 AI',
@@ -14,7 +14,7 @@ export const site = {
      Or paste a form service URL (Formspree, Getform, Web3Forms ...) to receive the message directly. */
   formEndpoint: '',
 };
- 
+
 export const regions = [
   { code: 'AE', name: 'United Arab Emirates', main: true },
   { code: 'SA', name: 'Saudi Arabia' },
@@ -23,7 +23,7 @@ export const regions = [
   { code: 'KW', name: 'Kuwait' },
   { code: 'OM', name: 'Oman' },
 ];
- 
+
 /* The 7 services. Order = order on the Services page and in the menu.
    `icon` must exist in templates/icons.js, `image` in site/assets/img. */
 export const services = [
@@ -278,7 +278,7 @@ export const services = [
     note: 'Available functionality depends on the CRM, third-party APIs, account permissions, and subscription plans. Data migration and advanced customisation should be agreed separately where applicable.',
   },
 ];
- 
+
 /* Services page: "Technology should solve real problems" */
 export const problems = [
   ['Disconnected systems', 'Bring business tools, data and everyday workflows together through connected software and integrations.'],
@@ -286,7 +286,7 @@ export const problems = [
   ['Inconsistent communication', 'Support customer enquiries, timely responses and follow-ups with connected communication tools and AI assistance.'],
   ['Software that doesn\'t fit', 'Create tailored digital experiences and software around your business needs instead of forcing your team into rigid tools.'],
 ];
- 
+
 /* Services page: 5-step path */
 export const path = [
   ['Discover', 'Understand your business, pain points and goals.', 'Clarity'],
@@ -295,14 +295,14 @@ export const path = [
   ['Launch', 'Test thoroughly and deploy with confidence.', 'Deployment'],
   ['Scale', 'Optimise and expand as your business grows.', 'Long-term growth'],
 ];
- 
+
 /* Home: three steps of "How we work" (stacking cards) */
 export const process = [
   ['Map', 'We sit with your team, follow the real work and list where time and leads leak out of the business.', 'map'],
   ['Build', 'We design the workflows, train the assistants and ship working pieces you can try early and give feedback on.', 'build'],
   ['Run and improve', 'We launch, watch the numbers and keep tuning, so the system gets better the longer it runs.', 'run'],
 ];
- 
+
 /* About page: "How we turn technology into solutions" slider */
 export const stories = [
   { tag: 'Customer conversations', title: 'Answer every enquiry.', em: 'Day and night.', text: 'An AI receptionist picks up calls, WhatsApp, email and chat, so customers get a reply while your team gets on with the work.', image: 'ai-receptionist.webp', link: 'ai-receptionist' },

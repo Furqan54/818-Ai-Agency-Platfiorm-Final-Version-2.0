@@ -3,12 +3,12 @@
 import { site, services, problems, path, process as processSteps, stories } from '../data/site.js';
 import { icon } from './icons.js';
 import { layout, esc, arrowBtn, ctaCard, regionsStrip } from './partials.js';
- 
+
 const svcHref = (r, s) => `${r}services/${s.slug}.html`;
 const other = services.filter(s => !s.featured);          // the 6 services that sit around the hub
 const receptionist = services.find(s => s.featured);
 const BTN = (href, label, cls) => arrowBtn(href, label, cls);
- 
+
 /* ============================================================== HOME */
 export function home() {
   const r = '';
@@ -22,7 +22,7 @@ export function home() {
     </article>`;
   const mini = (side, title, ic, text) => `<article class="card-wrap" data-fly data-side="${side}"><div class="card mini" data-tilt>
         <div class="mini__row"><h3>${title}</h3>${icon(ic)}</div><p>${text}</p></div></article>`;
- 
+
   const body = `
   <!-- HERO -->
   <section class="hero wrap" id="top">
@@ -37,9 +37,9 @@ export function home() {
     </div>
     <p class="hero__tag" aria-hidden="true">818 AI Agency <i></i> Your next chapter starts here</p>
   </section>
- 
+
   ${regionsStrip()}
- 
+
   <!-- LEAD SERVICE: AI RECEPTIONIST -->
   <section class="section wrap lead-svc" id="receptionist">
     <div class="lead-svc__copy">
@@ -63,7 +63,7 @@ export function home() {
       </div>
     </div>
   </section>
- 
+
   <!-- ABOUT: five cards around the 3D 818 mark -->
   <section class="section wrap" id="about">
     <div class="about">
@@ -88,7 +88,7 @@ export function home() {
       ${BTN('about.html', 'About 818 AI', 'btn--outline btn--sm')}
     </div>
   </section>
- 
+
   <!-- SERVICES HUB -->
   <section class="section wrap" id="services">
     <header class="section__head section__head--center reveal">
@@ -108,7 +108,7 @@ export function home() {
     </div>
     <div class="pill-cta reveal"><span>Let's build something better</span>${BTN('services.html', 'All services', 'btn--outline btn--sm')}</div>
   </section>
- 
+
   <!-- PROCESS (cards stack on top of each other) -->
   <section class="section wrap" id="process">
     <header class="section__head reveal">
@@ -122,18 +122,18 @@ export function home() {
       </article>`).join('')}
     </div>
   </section>
- 
+
   ${ctaCard(r, 'contact')}`;
- 
+
   return layout({ r, title: site.name, desc: '818 AI Agency. Intelligence, engineered. An AI receptionist, AI solutions, automation, custom software, CRM integrations and web development for businesses in Dubai, the UAE and the GCC.', active: 'home', body, pageClass: 'page-home' });
 }
- 
+
 const stepViz = {
   map: '<svg class="step__viz" viewBox="0 0 160 160" fill="none" aria-hidden="true"><circle cx="80" cy="80" r="64" stroke="rgba(255,255,255,.14)"/><circle cx="80" cy="80" r="44" stroke="rgba(255,255,255,.2)"/><circle cx="80" cy="80" r="24" stroke="#5ee0ff" stroke-width="2"/><path d="M80 80 128 40" stroke="#5ee0ff" stroke-width="2" stroke-linecap="round"/><circle cx="128" cy="40" r="5" fill="#5ee0ff"/><circle cx="46" cy="110" r="4" fill="#2f7bff"/><circle cx="104" cy="118" r="3" fill="#fff"/></svg>',
   build: '<svg class="step__viz" viewBox="0 0 160 160" fill="none" aria-hidden="true"><rect x="22" y="92" width="22" height="46" rx="6" fill="rgba(255,255,255,.14)"/><rect x="56" y="70" width="22" height="68" rx="6" fill="rgba(255,255,255,.22)"/><rect x="90" y="46" width="22" height="92" rx="6" fill="#2f7bff" fill-opacity=".85"/><rect x="124" y="22" width="22" height="116" rx="6" fill="#5ee0ff"/></svg>',
   run: '<svg class="step__viz" viewBox="0 0 160 160" fill="none" aria-hidden="true"><path d="M14 124 C40 120 52 96 76 98 S116 62 146 30" stroke="#5ee0ff" stroke-width="3" stroke-linecap="round"/><path d="M14 138h132" stroke="rgba(255,255,255,.18)"/><circle cx="146" cy="30" r="6" fill="#fff"/><circle cx="146" cy="30" r="14" stroke="rgba(94,224,255,.5)"/></svg>',
 };
- 
+
 /* ============================================================== ABOUT */
 export function about() {
   const r = '';
@@ -146,7 +146,7 @@ export function about() {
     ['db', 'Systems & Integrations', 'Connect your tools and platforms so information flows smoothly.'],
     ['bars', 'AI-Powered Solutions', 'Make it easier for your team to get information and work faster.'],
   ];
- 
+
   const body = `
   <!-- HERO BANNER -->
   <section class="section--top wrap">
@@ -162,7 +162,7 @@ export function about() {
       </div>
     </div>
   </section>
- 
+
   <!-- ONE ECOSYSTEM (3D orbit hub) -->
   <section class="section wrap" id="story">
     <div class="split">
@@ -178,7 +178,7 @@ export function about() {
       </div>
     </div>
   </section>
- 
+
   <!-- CHALLENGES TO SOLUTIONS -->
   <section class="section wrap">
     <header class="section__head section__head--center reveal">
@@ -193,7 +193,7 @@ export function about() {
       ${pillars.map(([ic, t, d], i) => `<article class="card-wrap" data-fly data-side="${i - 1}"><div class="card pillar" data-tilt><span class="svc__icon">${icon(ic)}</span><h3>${t}</h3><p>${d}</p></div></article>`).join('')}
     </div>
   </section>
- 
+
   <!-- HOW WE TURN TECHNOLOGY INTO SOLUTIONS (3D slider) -->
   <section class="section wrap" id="solutions">
     <header class="section__head section__head--center reveal">
@@ -217,18 +217,18 @@ export function about() {
     </div>
     <div class="pill-cta reveal"><span>See how these ideas become real solutions</span>${BTN('services.html', 'Explore Our Services', 'btn--outline btn--sm')}</div>
   </section>
- 
+
   ${ctaCard(r)}`;
   return layout({ r, title: 'About', desc: '818 AI is a technology company helping businesses in Dubai, the UAE and the GCC use AI, software and digital systems to operate smarter and grow faster.', active: 'about', body });
 }
- 
+
 const sliderBar = () => `<div class="slider__bar">
   <button class="slider__btn" type="button" data-prev aria-label="Previous">${icon('arrow-left')}</button>
   <div class="slider__dots" data-dots></div>
   <p class="slider__count"><b data-cur>01</b> / <span data-total>00</span></p>
   <button class="slider__btn" type="button" data-next aria-label="Next">${icon('arrow-right')}</button>
 </div>`;
- 
+
 /* ============================================================== SERVICES */
 export function servicesPage() {
   const r = '';
@@ -246,7 +246,7 @@ export function servicesPage() {
       ${services.map(s => `<a class="node" href="services/${s.slug}.html"><span class="node__ic">${icon(s.icon)}</span><span class="node__t">${esc(s.nav)}</span><span class="node__s">${esc(s.category)}</span></a>`).join('')}
     </div>
   </section>
- 
+
   <!-- PROBLEMS -->
   <section class="section wrap" id="problems">
     <header class="section__head section__head--center reveal">
@@ -266,7 +266,7 @@ export function servicesPage() {
     </div>
     <div class="pill-cta reveal"><span>Different challenges. One connected approach.</span>${BTN('contact.html', 'Book a Consultation', 'btn--outline btn--sm')}</div>
   </section>
- 
+
   <!-- CAPABILITIES (3D slider) -->
   <section class="section wrap" id="capabilities">
     <div class="caps">
@@ -295,7 +295,7 @@ export function servicesPage() {
       </div>
     </div>
   </section>
- 
+
   <!-- PATH -->
   <section class="section wrap" id="path">
     <header class="section__head section__head--center reveal">
@@ -311,11 +311,11 @@ export function servicesPage() {
     </ol>
     <div class="pill-cta reveal"><span>Ready when you are</span>${BTN('contact.html', 'Start a Project', 'btn--outline btn--sm')}</div>
   </section>
- 
+
   ${ctaCard(r)}`;
   return layout({ r, title: 'Services', desc: 'AI Receptionist, AI Solutions, AI Automation, AI Tools & Agents, Custom Software, Web Development and CRM & Integrations from 818 AI.', active: 'services', body });
 }
- 
+
 function flowViz() {
   return `<svg class="flowviz__svg" viewBox="0 0 400 300" role="img" aria-label="Systems, automation, communication and software connected around one centre">
     <g class="fv-lines" fill="none" stroke="rgba(94,224,255,.45)" stroke-width="1.4">
@@ -332,9 +332,9 @@ function flowViz() {
       `<circle cx="${x}" cy="${y}" r="5" fill="#5ee0ff"/><text x="${x}" y="${y + (y < 150 ? -16 : 24)}" text-anchor="middle" fill="rgba(226,238,255,.8)" font-size="11" letter-spacing="2" font-family="JetBrains Mono, monospace">${t.toUpperCase()}</text>`).join('')}
   </svg>`;
 }
- 
+
 const DIM = { 'ai-receptionist.webp': [1600, 900], 'ai-solutions.webp': [1536, 1024], 'ai-automation.webp': [1351, 1164], 'ai-agents.webp': [1600, 900], 'custom-software.webp': [1536, 1024], 'web-development.webp': [1536, 1024], 'crm-integrations.webp': [1600, 900] };
- 
+
 /* ============================================================== SERVICE (one template, 7 pages) */
 export function servicePage(s, i) {
   const r = '../';
@@ -346,7 +346,7 @@ export function servicePage(s, i) {
     'web-development': () => projectsBlock(s),
     'crm-integrations': () => '',
   }[s.slug];
- 
+
   const body = `
   <!-- HERO: copy on the left, your picture tilting in 3D on the right, glass cubes and light dust drifting behind (three.js) -->
   <section class="phero">
@@ -370,9 +370,9 @@ export function servicePage(s, i) {
       </div>
     </div>
   </section>
- 
+
   ${ex && s.slug === 'ai-receptionist' ? ex() : ''}
- 
+
   <!-- WHAT WE CAN BUILD -->
   <section class="section wrap" id="build">
     <header class="section__head section__head--center reveal">
@@ -385,9 +385,9 @@ export function servicePage(s, i) {
         <span class="feature__no">${String(k + 1).padStart(2, '0')}</span><h3>${esc(t)}</h3><p>${esc(d)}</p></div></article>`).join('')}
     </div>
   </section>
- 
+
   ${ex && s.slug === 'web-development' ? ex() : ''}
- 
+
   <!-- HOW WE WORK -->
   <section class="section wrap">
     <header class="section__head section__head--center reveal">
@@ -398,7 +398,7 @@ export function servicePage(s, i) {
       ${s.steps.map((t, k) => `<li class="reveal" style="--d:${(k % 2) * 0.08}s"><span class="stepgrid__no">${String(k + 1).padStart(2, '0')}</span><p>${esc(t)}</p></li>`).join('')}
     </ol>
   </section>
- 
+
   <!-- DELIVERABLES + VALUE -->
   <section class="section wrap">
     <div class="lists">
@@ -415,7 +415,7 @@ export function servicePage(s, i) {
     </div>
     ${s.note ? `<p class="note reveal">${esc(s.note)}</p>` : ''}
   </section>
- 
+
   <!-- CTA -->
   <section class="section wrap">
     <div class="card-wrap cta-wrap reveal"><div class="card cta cta--slim geo" data-tilt>
@@ -431,7 +431,7 @@ export function servicePage(s, i) {
   </section>`;
   return layout({ r, title: s.title, desc: `${s.tagline} ${s.intro}`.slice(0, 200), active: 'services', body });
 }
- 
+
 /* ---- AI Receptionist: channel cards + a live chat you can try ---- */
 function receptionistExtras(r, s) {
   const channel = (ic, t, d) => `<article class="card-wrap" data-fly data-side="-1"><div class="card chan" data-tilt><span class="svc__icon">${icon(ic)}</span><div><h3>${t}</h3><p>${d}</p></div></div></article>`;
@@ -470,7 +470,7 @@ function receptionistExtras(r, s) {
     </div>
   </section>`;
 }
- 
+
 /* ---- Web development: selected projects ---- */
 function projectsBlock(s) {
   return `<section class="section wrap" id="projects">
@@ -491,7 +491,7 @@ function projectsBlock(s) {
     </div>
   </section>`;
 }
- 
+
 /* ============================================================== CONTACT */
 export function contact() {
   const r = '';
@@ -511,7 +511,7 @@ export function contact() {
       </div>
     </div>
   </section>
- 
+
   <section class="section wrap" id="enquiry">
     <div class="contact">
       <div class="contact__side">
@@ -528,7 +528,7 @@ export function contact() {
           ${site.whatsapp ? `<li>${icon('whatsapp')}<a href="https://wa.me/${site.whatsapp}" rel="noopener">Chat on WhatsApp</a></li>` : ''}
         </ul>
       </div>
- 
+
       <div class="card-wrap reveal"><form class="card form geo" id="enquiryForm" novalidate data-endpoint="${esc(site.formEndpoint)}" data-email="${site.email}">
         <p class="eyebrow">Project enquiry</p>
         <h2 class="form__title">Tell us what you have in mind.</h2>
@@ -553,7 +553,7 @@ export function contact() {
       </form></div>
     </div>
   </section>
- 
+
   <section class="strip wrap reveal">
     <div><p class="eyebrow">818 AI</p><h2>Every good project starts <em>somewhere.</em></h2></div>
     <a class="strip__link" href="#enquiry">Start with an idea ${icon('arrow', 'arr')}</a>

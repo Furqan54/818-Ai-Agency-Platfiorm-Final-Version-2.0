@@ -5,15 +5,18 @@
    Run:  npm run build        (or  npm run watch  while you edit)       */
 import { build as bundle } from 'esbuild';
 import { mkdirSync, writeFileSync, copyFileSync, watch, existsSync } from 'node:fs';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 import { services } from './src/data/site.js';
 
+// always work from the project folder, wherever the command is run from (also fine with spaces in the path on Windows)
+const HERE = fileURLToPath(new URL('.', import.meta.url));
+process.chdir(HERE);
 const OUT = 'site';
 
 async function pages() {
   // re-import templates with a cache-buster so --watch picks up edits
   const v = '?v=' + Date.now();
-  const t = await import(pathToFileURL(new URL('./src/templates/pages.js', import.meta.url).pathname).href + v);
+  const t = await import(new URL('./src/templates/pages.js', import.meta.url).href + v);
   const files = {
     'index.html': t.home(),
     'about.html': t.about(),
@@ -28,7 +31,7 @@ async function pages() {
 
 async function js() {
   await bundle({
-    entryPoints: ['src/js/main.js'], bundle: true, minify: true, format: 'iife', target: 'es2020',
+    absWorkingDir: HERE, entryPoints: ['src/js/main.js'], bundle: true, minify: true, format: 'iife', target: 'es2020',
     outfile: `${OUT}/assets/app.js`, legalComments: 'none', logLevel: 'warning',
   });
 }
