@@ -56,7 +56,7 @@ function initGL() {
     try {
       if (kind === 'logo') v = createLogoView(getEnv(), { small });
       else if (kind === 'constel') v = createConstelView(el, getEnv(), { small });
-      else if (kind === 'skyline') v = createSkylineView({ small });
+      else if (kind === 'skyline') v = createSkylineView({ el, small });
       else if (kind === 'fx') v = createHeroFxView({ small });
     } catch (e) { console.warn('3D scene failed:', kind, e); }
     if (v) stage.addView({ el, ...v });

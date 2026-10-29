@@ -87,7 +87,7 @@ function nav(r, active) {
 /** The Dubai night skyline (3D, drawn by three.js) with a greeting on top */
 function gulfBand(r) {
   return `<section class="gulf" aria-label="Dubai and the Gulf">
-  <div class="gulf__scene" data-3d="skyline"></div>
+  <div class="gulf__scene" data-3d="skyline" data-base="${r}assets/img/dubai-gulf"></div>
   <div class="gulf__text wrap">
     <p class="gulf__ar" lang="ar" dir="rtl">مرحباً بكم في <bdi dir="ltr">818 AI</bdi></p>
     <p class="eyebrow">Dubai · UAE · GCC</p>

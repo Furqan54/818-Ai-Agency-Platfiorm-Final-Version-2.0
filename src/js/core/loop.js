@@ -53,7 +53,19 @@ export function start() {
   addEventListener('load', measureAll);
   if ('ResizeObserver' in window) { let h = 0; new ResizeObserver(() => { if (document.body.scrollHeight !== h) { h = document.body.scrollHeight; measureAll(); } }).observe(document.body); }
 
-  if (REDUCED) { for (const t of tasks) t.update && t.update({ ...frame, still: true }); return; }
+  if (REDUCED) {
+    /* reduced motion: no animation loop. The picture is redrawn only when something changes: scrolling, resizing,
+       and a few times while the page's pictures finish loading (they arrive after the first draw). */
+    const redraw = () => { frame.y = scrollY; for (const t of tasks) t.update && t.update({ ...frame, still: true }); };
+    let queued = false;
+    const ask = () => { if (queued) return; queued = true; requestAnimationFrame(() => { queued = false; redraw(); }); };
+    redraw();
+    addEventListener('scroll', ask, { passive: true });
+    addEventListener('resize', ask);
+    addEventListener('load', ask);
+    let n = 0; const iv = setInterval(() => { ask(); if (++n > 40) clearInterval(iv); }, 250);
+    return;
+  }
 
   let prev = performance.now(), prevY = scrollY;
   function tick(now) {

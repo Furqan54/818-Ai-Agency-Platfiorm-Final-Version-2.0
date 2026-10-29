@@ -738,14 +738,30 @@ em {                                   /* the cyan emphasis line, as on the curr
 .strip__link .arr { width: 14px; height: 14px; }
 .strip__link:hover { color: var(--neon); }
 
-/* ---------- the Dubai band above the footer ---------- */
-.gulf { position: relative; min-height: clamp(460px, 54vw, 680px); margin-top: clamp(30px, 5vw, 80px); overflow: clip; }
+/* ---------- the Dubai band above the footer: a living photograph, the words sit on the dark sky at the left ---------- */
+.gulf { position: relative; min-height: clamp(460px, 46vw, 800px); margin-top: clamp(30px, 5vw, 80px); overflow: clip; }
 .gulf__scene { position: absolute; inset: 0; }
-.gulf__text { position: relative; z-index: 1; display: grid; justify-items: center; text-align: center; gap: .8rem; padding-top: clamp(40px, 6vw, 80px); pointer-events: none; }
-.gulf__ar { font: 700 clamp(1.7rem, 3.6vw, 2.8rem)/1.3 'Cairo', system-ui, sans-serif; color: var(--gold); text-shadow: 0 0 34px rgba(var(--gold-rgb), .55), 0 4px 24px rgba(0, 0, 0, .8); }
-.gulf h2 { font-size: clamp(1.9rem, 4.2vw, 3.4rem); }
-.gulf__text > p:last-child { max-width: 52ch; color: var(--ink); text-shadow: 0 2px 20px rgba(0, 0, 0, .9); }
-.no-webgl .gulf { background: linear-gradient(180deg, transparent, #2a1040 60%, #5a2540); }
+.gulf::before { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(ellipse 27% 58% at 25% 36%, rgba(3, 7, 22, .66), rgba(3, 7, 22, .34) 55%, rgba(3, 7, 22, 0) 100%); }
+.gulf__text { position: relative; z-index: 2; display: grid; justify-items: start; text-align: left; gap: .8rem; padding-top: clamp(40px, 6vw, 90px); padding-left: clamp(16px, 11vw, 190px); pointer-events: none; }
+.gulf__ar { font: 700 clamp(1.7rem, 3.4vw, 2.8rem)/1.3 'Cairo', system-ui, sans-serif; color: var(--gold); text-shadow: 0 0 34px rgba(var(--gold-rgb), .55), 0 4px 24px rgba(0, 0, 0, .8); }
+.gulf h2 { font-size: clamp(1.9rem, 3.3vw, 3rem); max-width: 14ch; text-wrap: balance; }
+.gulf__text > p:last-child { max-width: 36ch; color: var(--ink); text-shadow: 0 2px 20px rgba(0, 0, 0, .9); }
+/* no WebGL, or the pictures failed to load: show the plain photograph */
+.no-webgl .gulf__scene, .gulf__scene.is-fallback { background: url(img/dubai-gulf.webp) center / cover no-repeat; }
+/* tablets: a narrower paragraph so the words stay clear of the Burj and its 818 AI lettering */
+@media (min-width: 761px) and (max-width: 1100px) {
+  .gulf__text { padding-left: clamp(16px, 8vw, 90px); }
+  .gulf__text > p:last-child { max-width: 28ch; }
+}
+@media (max-width: 760px) {
+  /* phones: the words first, the picture (the Burj and the men) below them */
+  .gulf { min-height: 0; display: flex; flex-direction: column; }
+  .gulf::before { display: none; }
+  .gulf__text { order: 1; justify-items: center; text-align: center; padding: 40px 16px 8px; background: radial-gradient(ellipse 100% 90% at 50% 55%, rgba(3, 7, 22, .62), rgba(3, 7, 22, 0) 82%); }
+  .gulf h2 { max-width: none; }
+  .gulf__scene { position: relative; inset: auto; order: 2; height: 92vw; }
+}
 .footer__regions { margin-top: .4rem; font-size: .76rem; line-height: 1.8; color: var(--ink-3); }
 .footer__col a[href^="mailto"] { overflow-wrap: anywhere; }
 
