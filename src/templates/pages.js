@@ -1,6 +1,7 @@
 /* One function per kind of page. Each returns the HTML between <main> and </main>
    (the shared header, footer and Dubai band are added by layout() in partials.js). */
 import { site, services, problems, path, process as processSteps, stories } from '../data/site.js';
+import { voiceDemo } from '../data/voice.js';
 import { icon } from './icons.js';
 import { layout, esc, arrowBtn, ctaCard, regionsStrip } from './partials.js';
 
@@ -468,6 +469,45 @@ function receptionistExtras(r, s) {
         ${perk('clock', 'Always Available', 'Day, night, weekends and holidays')}
       </div>
     </div>
+  </section>${voiceBlock(r, s)}`;
+}
+
+/* ---- AI Receptionist: a sample phone call you can listen to (sits right under the chat) ---- */
+function voiceBlock(r, s) {
+  const v = voiceDemo;
+  const mmss = t => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
+  const bars = v.peaks.map((h, i) => {
+    const t = ((i + .5) / v.peaks.length) * v.duration;
+    const line = v.lines.find(l => t >= l.start && t <= l.end + .2);
+    return `<i style="--h:${h}%" data-who="${line ? line.who : 'x'}"></i>`;
+  }).join('');
+  const lines = v.lines.map(l => `<div class="msg msg--${l.who === 'r' ? 'bot' : 'me'}" data-start="${l.start}" data-end="${l.end}"><span class="msg__who">${l.who === 'r' ? 'Receptionist' : 'Caller'}</span>${esc(l.text)}</div>`).join('');
+  return `
+  <section class="section section--voice wrap" id="voice">
+    <header class="section__head section__head--center reveal">
+      <p class="pill">Hear it on a call</p>
+      <h2>Listen to a <em>sample call.</em></h2>
+      <p>Press play to hear how your receptionist can answer the phone, take a booking and confirm it. The business and names in this example are made up, and the voices are generated.</p>
+    </header>
+    <div class="voicewrap card-wrap reveal"><div class="card voice" data-voice data-src="${r}${v.src}" data-duration="${v.duration}">
+      <div class="voice__head">
+        <span class="voice__ic">${icon('phone')}</span>
+        <div><b>Sample call · ${esc(v.business)}</b><small data-vstatus>Tap play to listen (English)</small></div>
+        <span class="voice__time" data-vtime>0:00 / ${mmss(v.duration)}</span>
+      </div>
+      <div class="voice__player">
+        <button type="button" class="voice__play" data-vplay aria-label="Play the sample call">
+          <svg class="voice__i voice__i--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.2v13.6a1 1 0 0 0 1.5.86l11-6.8a1 1 0 0 0 0-1.72l-11-6.8A1 1 0 0 0 8 5.2z"/></svg>
+          <svg class="voice__i voice__i--pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4.2" height="14" rx="1.2"/><rect x="13.8" y="5" width="4.2" height="14" rx="1.2"/></svg>
+        </button>
+        <div class="voice__wave" data-vwave role="slider" tabindex="0" aria-label="Call position" aria-valuemin="0" aria-valuemax="${Math.round(v.duration)}" aria-valuenow="0" aria-valuetext="0:00">${bars}</div>
+      </div>
+      <div class="voice__body" data-vbody>${lines}</div>
+      <div class="voice__foot">
+        <p>Your receptionist is set up with your own services, opening hours and tone of voice, in English and Arabic.</p>
+        ${BTN(`${r}contact.html?service=${s.slug}`, 'Get this for my business', 'btn--solid btn--sm')}
+      </div>
+    </div></div>
   </section>`;
 }
 

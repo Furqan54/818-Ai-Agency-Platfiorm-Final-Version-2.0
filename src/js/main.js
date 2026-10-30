@@ -18,6 +18,7 @@ import { initStack } from './fx/stack.js';
 import { initFrames, initParallax } from './fx/frame3d.js';
 import { initSliders } from './fx/slider.js';
 import { initChat } from './fx/chat.js';
+import { initVoice } from './fx/voice.js';
 import { initForm } from './fx/form.js';
 import { createStage } from './gl/stage.js';
 import { makeEnv } from './gl/common.js';
@@ -30,7 +31,7 @@ root.classList.add('js');
 
 /* ---- page effects ---- */
 initChrome(); initReveal(); initDepth(); initHub(); initStack(); initFrames(); initParallax();
-initTilt(); initMagnetic(); initGlow(); initSliders(); initChat(); initForm();
+initTilt(); initMagnetic(); initGlow(); initSliders(); initChat(); initVoice(); initForm();
 
 /* ---- 3D: one canvas, many scenes ---- */
 function useFallback() {
