@@ -1,24 +1,27 @@
 /* "Built for Dubai and the Gulf": the client's photograph with a light, calm movement.
 
-   The picture is drawn on one full-screen shader and it only does two gentle things:
-     1. It follows the mouse (and drifts very slowly on its own). A small helper image holds how far each part of
-        the photo is (depth: the skyline far away, the men and the railing close), so when the camera moves, near
-        and far parts slide against each other and the photo feels like a real place with depth.
-     2. A very soft shimmer: a few lit windows twinkle and the blue light trails breathe a little.
-   No water, fountain, boat or wave movement. The top of the picture dissolves into deep navy and then into the page
-   above, and the bottom melts into the footer's colour, so the band has no hard edge. With prefers-reduced-motion everything holds still.
-   If WebGL is missing the page shows the plain photo (see styles.css).
-   The helper images are made by tools/make-gulf.py.                                                            */
+   The picture is drawn on one full-screen shader. What moves:
+     - The cursor: the picture glides with the mouse (it shifts here and there, like a camera following your hand),
+       and a small depth map (made by tools/make-gulf.py: the skyline far away, the men and the railing close)
+       makes near and far parts slide a little against each other.
+     - The scroll: as the section passes through the screen the picture slowly pushes in (zooms closer) and drifts,
+       like the old 3D skyline did.
+     - A very soft shimmer: a few lit windows twinkle and the blue light trails breathe a little.
+   No water, fountain, boat or wave movement. The text sits in the dark sky above the picture; the glowing 818 AI on
+   the Burj is placed right under the text, and stays there while everything moves.
+   The top of the picture dissolves into deep navy and then into the page above, and the bottom melts into the
+   footer's colour, so the band has no hard edge. With prefers-reduced-motion everything holds still.
+   If WebGL is missing the page shows the plain photo (see styles.css).                                         */
 import { Scene, PerspectiveCamera, Mesh, ShaderMaterial, BufferGeometry, Float32BufferAttribute, TextureLoader, LinearFilter, LinearMipmapLinearFilter, Vector2 } from 'three';
 import { REDUCED, clamp, lerp } from '../core/env.js';
 
 const IMG_W = 1877, IMG_H = 838;                                       // size of the photograph
-const FEATHER = 0.24;                                                  // top part of the box (as a fraction) that is only the soft dissolve above the picture; styles.css makes the box taller by the same amount
+const PIV_X = 1000, PIV_Y = 200;                                       // top of the glowing 818 AI tower in the photograph: this point is pinned just below the text
 
 const FRAG = `
   uniform sampler2D uImg; uniform sampler2D uM1; uniform sampler2D uM2;
-  uniform float uTime; uniform float uReveal; uniform float uFeather;
-  uniform vec2 uCenter; uniform vec2 uSpan; uniform vec2 uPar; uniform vec2 uSize;
+  uniform float uTime; uniform float uReveal; uniform float uScale; uniform float uTopFade;
+  uniform vec2 uBox; uniform vec2 uPivotBand; uniform vec2 uPar; uniform vec2 uSize;
   varying vec2 vU;
   float h21(vec2 p){ vec3 p3 = fract(vec3(p.xyx) * .1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
   vec3 img(vec2 p){ return texture2D(uImg, vec2(p.x, 1. - p.y)).rgb; }
@@ -30,13 +33,11 @@ const FRAG = `
 
   void main(){
     float t = uTime;
-    float F = uFeather;
-    /* the picture sits in the lower part of the box; above it is the soft dissolve */
-    vec2 pv = vec2(vU.x, min(vU.y / (1. - F), 1.));
-    /* where on the picture is this pixel, after the camera has moved (near things move more than far things) */
-    vec2 p0 = uCenter + vec2(pv.x - .5, .5 - pv.y) * uSpan;
+    vec2 bp = vec2(vU.x * uBox.x, (1. - vU.y) * uBox.y);                  // this pixel's place in the band, in px from the top left
+    /* which point of the photograph is here (the tower top is pinned at uPivotBand, everything else follows from the scale) */
+    vec2 p0 = (vec2(${PIV_X}., ${PIV_Y}.) + (bp - uPivotBand) / uScale) / uSize;
     vec2 p = p0;
-    for (int i = 0; i < 3; i++) p = p0 - uPar * (m2(p).b - .30);
+    for (int i = 0; i < 3; i++) p = p0 - uPar * (m2(p).b - .30);          // depth: near things move more than far things
 
     vec3 col = img(p);
     vec3 a = m1(p);
@@ -51,7 +52,7 @@ const FRAG = `
     /* the blue light trails breathe a little */
     col += (vec3(.10, .32, 1.) * .55 + col * .30) * a.b * (.09 + .05 * sin(t * .7));
 
-    vec2 v = pv - .5;
+    vec2 v = bp / uBox - .5;
     col *= 1. - dot(v, v) * .5;                                          // soft vignette
     col += (h21(gl_FragCoord.xy) - .5) / 255.;                          // no banding in the dark sky
 
@@ -59,11 +60,12 @@ const FRAG = `
        The picture emerges out of deep navy, and the navy itself melts into the page background behind it. */
     float bot = 1. - smoothstep(0., .22, vU.y);
     vec3 navy = mix(vec3(.012, .026, .07), vec3(.0235, .041, .090), bot);     // at the very bottom: exactly the footer's colour
-    float top = 1. - vU.y;                                               // 0 at the top of the box ... 1 at the bottom
-    float tp = (top - F) / (1. - F);                                     // 0 at the top edge of the picture
-    float show = smoothstep(-.05, .20, tp) * smoothstep(0., .26, vU.y);   // how much of the picture (rest is navy)
+    float photoTop = uPivotBand.y - float(${PIV_Y}.) * uScale;           // where the top edge of the photograph is, in px from the top of the band
+    float tp = (bp.y - photoTop) / (uSize.y * uScale);                   // 0 at the top edge of the photograph, 1 at its bottom edge
+    float sides = smoothstep(0., .10, p0.x) * smoothstep(0., .10, 1. - p0.x);     // on very wide screens the photograph is narrower than the band: its left and right edges dissolve too
+    float show = smoothstep(-.05, .20, tp) * smoothstep(0., .12, vU.y) * sides;  // how much of the picture (rest is navy)
     col = mix(navy, col, show);
-    float alpha = uReveal * smoothstep(0., F, top);   // the navy is solid before the picture starts to show: the page's own background never shows through the photo
+    float alpha = uReveal * smoothstep(0., uTopFade, bp.y);              // the navy is solid before the picture starts to show: the page's own background never shows through the photo
     gl_FragColor = vec4(col, alpha);
   }`;
 
@@ -74,8 +76,8 @@ export function createSkylineView({ el, small = false } = {}) {
   const mat = new ShaderMaterial({
     uniforms: {
       uImg: { value: null }, uM1: { value: null }, uM2: { value: null },
-      uTime: { value: 0 }, uReveal: { value: 0 }, uFeather: { value: FEATHER },
-      uCenter: { value: new Vector2(0.5, 0.46) }, uSpan: { value: new Vector2(0.93, 0.93) }, uPar: { value: new Vector2(0, 0) },
+      uTime: { value: 0 }, uReveal: { value: 0 }, uScale: { value: 0.8 }, uTopFade: { value: 150 },
+      uBox: { value: new Vector2(1000, 600) }, uPivotBand: { value: new Vector2(500, 300) }, uPar: { value: new Vector2(0, 0) },
       uSize: { value: new Vector2(IMG_W, IMG_H) },
     },
     vertexShader: 'varying vec2 vU; void main(){ vU = position.xy * .5 + .5; gl_Position = vec4(position.xy, 0., 1.); }',
@@ -93,27 +95,44 @@ export function createSkylineView({ el, small = false } = {}) {
   }, undefined, () => { if (el) el.classList.add('is-fallback'); });
   load(base + '.webp', 'uImg', false); load(base + '-m1.png', 'uM1', true); load(base + '-m2.png', 'uM2', true);
 
-  /* which part of the picture fits the box: the whole picture on wide screens, the Burj and the men on phones */
-  const ZOOM = 1.07;
-  let cx0 = 0.5, cy0 = 0.46, vw = 0.9, vh = 0.9;
+  /* ---- layout: where the photograph sits in the band ---- */
+  let W = 1000, H = 600, s0 = 0.8, xb0 = 500, yb0 = 300, vf = 0.9;
   function resize(w, h) {
-    const Ai = IMG_W / IMG_H, Ab = w / (h * (1 - FEATHER));           // the picture only fills the lower part of the box
-    vh = 1 / ZOOM; vw = (vh * Ab) / Ai;
-    if (vw > 1 / ZOOM) { vw = 1 / ZOOM; vh = (vw * Ai) / Ab; }
-    const portrait = clamp((1.5 - Ab) / 0.6, 0, 1);
-    cx0 = clamp(lerp(0.5, 0.40, portrait), vw / 2, 1 - vw / 2); cy0 = clamp(0.46, vh / 2, 1 - vh / 2);
-    mat.uniforms.uSpan.value.set(vw, vh); mat.uniforms.uCenter.value.set(cx0, cy0);
+    W = w; H = h;
+    const band = el && el.parentElement, text = band && band.querySelector('.gulf__text');
+    const overlay = !el || getComputedStyle(el).position === 'absolute';      // desktop and tablet: the words sit on top of the picture box; phones: the words are above it
+    /* vertically: the glowing tower top goes just under the words (desktop, tablet), or near the top of the box (phones) */
+    if (overlay && text) { const bb = band.getBoundingClientRect(), tb = text.getBoundingClientRect(); yb0 = (tb.bottom - bb.top) + 22; }
+    else yb0 = h * 0.22;
+    /* scale: wide enough that the picture can glide sideways without showing an edge, but never so big that the compact box
+       cuts off the fountains, the boats and the men (on very wide screens the photograph is then a little narrower than the band
+       and its left and right edges dissolve into the dark, like its top and bottom) */
+    const sWide = 1.09 * w / IMG_W;
+    s0 = sWide;
+    if (overlay) s0 = clamp((h - yb0 - 8) / (665 - PIV_Y), 0.55 * sWide, sWide);
+    else s0 = Math.max(sWide, h * 0.80 / 560);                                // phones: zoom in on the Burj and the men
+    vf = w / (s0 * IMG_W);                                                    // how much of the photograph's width is visible (1 = all of it)
+    /* horizontally: the middle of the photograph, or on phones a little to the left so the men and the Burj both fit */
+    const fx = vf >= 1 ? 0.5 : clamp(lerp(0.5, 0.40, clamp((0.85 - vf) / 0.35, 0, 1)), vf / 2, 1 - vf / 2);
+    xb0 = w / 2 + (PIV_X - fx * IMG_W) * s0;
+    mat.uniforms.uBox.value.set(w, h);
+    mat.uniforms.uTopFade.value = overlay ? Math.min(0.22 * h, 170) : 0.30 * h;
   }
   function update({ time }, local, { progress }) {
     const u = mat.uniforms;
     u.uTime.value = REDUCED ? 4 : time;                                  // reduced motion: hold one still moment
+    let xb = xb0, yb = yb0, s = s0, px = 0, py = 0;
     if (!REDUCED) {
-      /* the camera follows the mouse: the whole picture glides a little (this cannot distort anything), and on top of
-         that near parts shift slightly more than far ones, for depth. Kept small on purpose: bigger depth shifts
-         start to tear the edges of the men and the railing. */
-      u.uPar.value.set(-local.mx * 0.009 + Math.sin(time * 0.11) * 0.003, -local.my * 0.005 + Math.cos(time * 0.09) * 0.002 + (progress - 0.5) * 0.008);
-      u.uCenter.value.set(clamp(cx0 + local.mx * 0.022 + Math.sin(time * 0.07) * 0.004, vw / 2, 1 - vw / 2), clamp(cy0 + local.my * 0.006, vh / 2, 1 - vh / 2));
+      const pr = clamp(progress, 0, 1);
+      /* the cursor: the whole picture glides (this cannot distort anything), and near parts shift a little more than far ones */
+      xb = xb0 - local.mx * 0.030 * W + Math.sin(time * 0.10) * 0.006 * W;
+      yb = yb0 - local.my * 0.020 * H + (0.5 - pr) * 0.03 * H + Math.cos(time * 0.08) * 0.004 * H;
+      /* the scroll: the picture slowly pushes in as the band passes through the screen */
+      s = s0 * (1 + 0.06 * pr);
+      xb = W / 2 + (xb - W / 2) * (1 + 0.06 * pr);
+      px = -local.mx * 0.009 + Math.sin(time * 0.11) * 0.003; py = -local.my * 0.005 + Math.cos(time * 0.09) * 0.002;
     }
+    u.uScale.value = s; u.uPivotBand.value.set(xb, yb); u.uPar.value.set(px, py);
     u.uReveal.value = shownAt ? clamp((performance.now() - shownAt) / 1100) : 0;          // fade in after loading
   }
   return { scene, camera, update, resize };
