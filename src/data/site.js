@@ -236,6 +236,7 @@ export const services = [
       { name: 'CyberXSoft.net', image: 'project-cyberxsoft.webp', url: 'https://cyber-x-soft-studio-net.vercel.app/', blurb: 'A company website presenting CyberXSoft\'s services and professional digital presence.', notes: 'A business website designed to communicate the company\'s services and capabilities.' },
       { name: 'Laveet Enterprises', image: 'project-laveet.webp', url: 'https://laveet-enterprises-portfolio.vercel.app/', blurb: 'A company website for Laveet Enterprises, civil and electrical contractors in Karachi, with sections for services, its journey, projects, team and a request-a-quote button.', notes: 'A professional business website that presents the company and makes it easy to ask for a quote.' },
       { name: 'Ridex Car Rental', image: 'project-ridex.webp', url: 'https://car-rent-website-teal.vercel.app/', blurb: 'A car rental and lease-takeover website with a car search by brand, monthly payment and year, car listings and a simple step-by-step process.', notes: 'A listings-style website built around searching for a car and making a deal.' },
+      { name: 'Go Geo Buses', image: 'project-gogeo.webp', url: 'https://www.gogeobuses.co.uk/', blurb: 'A coach and minibus hire website for the UK and Ireland, with a quick enquiry form that sends by email or WhatsApp, vehicle options, location pages, FAQs and a request-a-quote button.', notes: 'A clear business website that explains the service and makes it easy to ask for a quote.' },
     ],
   },
   {

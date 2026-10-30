@@ -654,6 +654,8 @@ em {                                   /* the cyan emphasis line, as on the curr
 .svcnav__a b { font-size: 1.05rem; letter-spacing: -.02em; }
 .svcnav__a .ic { color: var(--neon); width: 22px; height: 22px; }
 .projects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; max-width: 1000px; margin-inline: auto; }
+/* an odd number of projects: the last card sits centred under the pair above instead of alone on the left */
+.projects > :last-child:nth-child(odd) { grid-column: 1 / -1; justify-self: center; width: calc(50% - .6rem); }
 .project { gap: .8rem; }
 .project__shot { position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); transform: translateZ(20px); }
 .project__shot img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; object-position: top; }
@@ -800,6 +802,7 @@ em {                                   /* the cyan emphasis line, as on the curr
   .banner__img, .banner--contact .banner__img { min-height: 0; aspect-ratio: 16 / 9; }
   .banner__ar { display: none; }
   .lists, .projects, .svcnav { grid-template-columns: minmax(0, 1fr); }
+  .projects > :last-child:nth-child(odd) { grid-column: auto; justify-self: stretch; width: auto; }
 }
 @media (max-width: 760px) {
   .brand__text small { display: none; }
