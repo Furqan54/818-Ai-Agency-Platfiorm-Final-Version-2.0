@@ -12,7 +12,7 @@
    The top of the picture dissolves into deep navy and then into the page above, and the bottom melts into the
    footer's colour, so the band has no hard edge. With prefers-reduced-motion everything holds still.
    If WebGL is missing the page shows the plain photo (see styles.css).                                         */
-import { Scene, PerspectiveCamera, Mesh, ShaderMaterial, BufferGeometry, Float32BufferAttribute, TextureLoader, LinearFilter, LinearMipmapLinearFilter, Vector2 } from 'three';
+import { Scene, PerspectiveCamera, Mesh, ShaderMaterial, BufferGeometry, Float32BufferAttribute, TextureLoader, DataTexture, RGBAFormat, UnsignedByteType, LinearFilter, LinearMipmapLinearFilter, Vector2 } from 'three';
 import { REDUCED, clamp, lerp } from '../core/env.js';
 
 const IMG_W = 1877, IMG_H = 838;                                       // size of the photograph
@@ -21,7 +21,7 @@ const PIV_X = 1000, PIV_Y = 200;                                       // top of
 const FRAG = `
   uniform sampler2D uImg; uniform sampler2D uM1; uniform sampler2D uM2;
   uniform float uTime; uniform float uReveal; uniform float uScale; uniform float uTopFade;
-  uniform vec2 uBox; uniform vec2 uPivotBand; uniform vec2 uPar; uniform vec2 uSize;
+  uniform vec2 uBox; uniform vec2 uPivotBand; uniform vec2 uPar; uniform vec2 uSize; uniform vec2 uTilt;
   varying vec2 vU;
   float h21(vec2 p){ vec3 p3 = fract(vec3(p.xyx) * .1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
   vec3 img(vec2 p){ return texture2D(uImg, vec2(p.x, 1. - p.y)).rgb; }
@@ -35,7 +35,9 @@ const FRAG = `
     float t = uTime;
     vec2 bp = vec2(vU.x * uBox.x, (1. - vU.y) * uBox.y);                  // this pixel's place in the band, in px from the top left
     /* which point of the photograph is here (the tower top is pinned at uPivotBand, everything else follows from the scale) */
-    vec2 p0 = (vec2(${PIV_X}., ${PIV_Y}.) + (bp - uPivotBand) / uScale) / uSize;
+    vec2 d = bp - uPivotBand;
+    float k = 1. + uTilt.x * d.x / uBox.x + uTilt.y * d.y / uBox.y;      // a slight perspective: the side the camera moves towards comes a little closer, the other side a little farther
+    vec2 p0 = (vec2(${PIV_X}., ${PIV_Y}.) + d / (uScale * k)) / uSize;
     vec2 p = p0;
     for (int i = 0; i < 3; i++) p = p0 - uPar * (m2(p).b - .30);          // depth: near things move more than far things
 
@@ -77,7 +79,7 @@ export function createSkylineView({ el, small = false } = {}) {
     uniforms: {
       uImg: { value: null }, uM1: { value: null }, uM2: { value: null },
       uTime: { value: 0 }, uReveal: { value: 0 }, uScale: { value: 0.8 }, uTopFade: { value: 150 },
-      uBox: { value: new Vector2(1000, 600) }, uPivotBand: { value: new Vector2(500, 300) }, uPar: { value: new Vector2(0, 0) },
+      uBox: { value: new Vector2(1000, 600) }, uPivotBand: { value: new Vector2(500, 300) }, uPar: { value: new Vector2(0, 0) }, uTilt: { value: new Vector2(0, 0) },
       uSize: { value: new Vector2(IMG_W, IMG_H) },
     },
     vertexShader: 'varying vec2 vU; void main(){ vU = position.xy * .5 + .5; gl_Position = vec4(position.xy, 0., 1.); }',
@@ -85,15 +87,25 @@ export function createSkylineView({ el, small = false } = {}) {
   });
   const mesh = new Mesh(geo, mat); mesh.frustumCulled = false; mesh.visible = false; scene.add(mesh);
 
-  /* load the photograph and its two helper images */
-  const base = (el && el.dataset.base) || '', loader = new TextureLoader();
-  let loaded = 0, shownAt = 0;
-  const load = (url, key, data) => loader.load(url, t => {
-    t.minFilter = data ? LinearFilter : LinearMipmapLinearFilter; t.magFilter = LinearFilter; t.generateMipmaps = !data; t.anisotropy = 4;
-    mat.uniforms[key].value = t;
-    if (++loaded === 3) { mesh.visible = true; shownAt = performance.now(); }
-  }, undefined, () => { if (el) el.classList.add('is-fallback'); });
-  load(base + '.webp', 'uImg', false); load(base + '-m1.png', 'uM1', true); load(base + '-m2.png', 'uM2', true);
+  /* load the photograph and its two helper images.
+     The photograph itself is needed. The two helper images (depth and light trails) are a bonus: if one of them cannot be found
+     the picture still works and still follows the cursor, just without the depth and the shimmer. */
+  const guessBase = () => {                                                   // if the page does not say where the pictures are, look next to app.js
+    const sc = Array.from(document.scripts).find(x => /assets\/app\.js/.test(x.src));
+    return sc ? new URL('img/dubai-gulf', sc.src).href : 'assets/img/dubai-gulf';
+  };
+  const base = (el && el.dataset.base) || guessBase(), loader = new TextureLoader();
+  const flat = (r, g, b) => { const t = new DataTexture(new Uint8Array([r, g, b, 255]), 1, 1, RGBAFormat, UnsignedByteType); t.needsUpdate = true; return t; };
+  let ready = 0, shownAt = 0;
+  const done = () => { if (++ready === 3 && mat.uniforms.uImg.value) { mesh.visible = true; shownAt = performance.now(); } };
+  const load = (url, key, needed, plain) => loader.load(url, t => {
+    t.minFilter = needed ? LinearMipmapLinearFilter : LinearFilter; t.magFilter = LinearFilter; t.generateMipmaps = needed; t.anisotropy = 4;
+    mat.uniforms[key].value = t; done();
+  }, undefined, () => {
+    console.warn('[818 AI] could not load ' + url + (needed ? ' (the photograph itself, so the plain photo is shown)' : ' (a helper image: the picture still follows the cursor, without depth and shimmer)'));
+    if (needed) { if (el) el.classList.add('is-fallback'); } else { mat.uniforms[key].value = plain; done(); }
+  });
+  load(base + '.webp', 'uImg', true); load(base + '-m1.png', 'uM1', false, flat(0, 0, 0)); load(base + '-m2.png', 'uM2', false, flat(0, 0, 77));
 
   /* ---- layout: where the photograph sits in the band ---- */
   let W = 1000, H = 600, s0 = 0.8, xb0 = 500, yb0 = 300, vf = 0.9;
@@ -102,7 +114,7 @@ export function createSkylineView({ el, small = false } = {}) {
     const band = el && el.parentElement, text = band && band.querySelector('.gulf__text');
     const overlay = !el || getComputedStyle(el).position === 'absolute';      // desktop and tablet: the words sit on top of the picture box; phones: the words are above it
     /* vertically: the glowing tower top goes just under the words (desktop, tablet), or near the top of the box (phones) */
-    if (overlay && text) { const bb = band.getBoundingClientRect(), tb = text.getBoundingClientRect(); yb0 = (tb.bottom - bb.top) + 22; }
+    if (overlay && text) { const bb = band.getBoundingClientRect(), tb = text.getBoundingClientRect(); yb0 = (tb.bottom - bb.top) + 30; }
     else yb0 = h * 0.22;
     /* scale: wide enough that the picture can glide sideways without showing an edge, but never so big that the compact box
        cuts off the fountains, the boats and the men (on very wide screens the photograph is then a little narrower than the band
@@ -121,18 +133,20 @@ export function createSkylineView({ el, small = false } = {}) {
   function update({ time }, local, { progress }) {
     const u = mat.uniforms;
     u.uTime.value = REDUCED ? 4 : time;                                  // reduced motion: hold one still moment
-    let xb = xb0, yb = yb0, s = s0, px = 0, py = 0;
+    let xb = xb0, yb = yb0, s = s0, px = 0, py = 0, tx = 0, ty = 0;
     if (!REDUCED) {
       const pr = clamp(progress, 0, 1);
-      /* the cursor: the whole picture glides (this cannot distort anything), and near parts shift a little more than far ones */
-      xb = xb0 - local.mx * 0.030 * W + Math.sin(time * 0.10) * 0.006 * W;
-      yb = yb0 - local.my * 0.020 * H + (0.5 - pr) * 0.03 * H + Math.cos(time * 0.08) * 0.004 * H;
+      /* the cursor works like a camera: the whole picture glides, it tilts a little in perspective, and near parts
+         (the men, the railing) slide a bit more than far parts (the skyline), so it feels like a real place */
+      xb = xb0 - local.mx * 0.045 * W + Math.sin(time * 0.10) * 0.006 * W;
+      yb = yb0 - local.my * 0.025 * H + (0.5 - pr) * 0.03 * H + Math.cos(time * 0.08) * 0.004 * H;
+      tx = local.mx * 0.05; ty = local.my * 0.06;
+      px = -local.mx * 0.012 + Math.sin(time * 0.11) * 0.003; py = -local.my * 0.007 + Math.cos(time * 0.09) * 0.002;
       /* the scroll: the picture slowly pushes in as the band passes through the screen */
       s = s0 * (1 + 0.06 * pr);
       xb = W / 2 + (xb - W / 2) * (1 + 0.06 * pr);
-      px = -local.mx * 0.009 + Math.sin(time * 0.11) * 0.003; py = -local.my * 0.005 + Math.cos(time * 0.09) * 0.002;
     }
-    u.uScale.value = s; u.uPivotBand.value.set(xb, yb); u.uPar.value.set(px, py);
+    u.uScale.value = s; u.uPivotBand.value.set(xb, yb); u.uPar.value.set(px, py); u.uTilt.value.set(tx, ty);
     u.uReveal.value = shownAt ? clamp((performance.now() - shownAt) / 1100) : 0;          // fade in after loading
   }
   return { scene, camera, update, resize };
