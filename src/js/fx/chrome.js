@@ -1,15 +1,12 @@
-/* Header and progress bar: scroll progress, darker bar after scrolling, mobile menu */
-import { $, view, clamp, r2, root } from '../core/env.js';
+/* Header: darker bar after scrolling, mobile menu */
+import { $, root } from '../core/env.js';
 import { add } from '../core/loop.js';
 
 export function initChrome() {
-  const bar = $('#progress'), nav = $('#nav');
-  let lastBar = '', scrolled = false;
+  const nav = $('#nav');
+  let scrolled = false;
   add({
     update({ y }) {
-      const max = Math.max(1, view.docH - view.h);
-      const css = `scaleX(${r2(clamp(y / max))})`;
-      if (css !== lastBar) { lastBar = css; bar.style.transform = css; }
       const s = y > 30;
       if (s !== scrolled) { scrolled = s; nav.classList.toggle('scrolled', s); }
     },

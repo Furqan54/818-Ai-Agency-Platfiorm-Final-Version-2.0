@@ -31,7 +31,6 @@ ${sprite()}
 <canvas id="gl" aria-hidden="true"></canvas>
 <div class="veil" aria-hidden="true"></div>
 <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
-<div class="progress" id="progress" aria-hidden="true"></div>
 
 ${nav(r, active)}
 
@@ -86,12 +85,11 @@ function nav(r, active) {
 
 /** The Dubai night skyline (3D, drawn by three.js) with a greeting on top */
 function gulfBand(r) {
-  return `<section class="gulf" aria-label="Dubai and the Gulf">
+  return `<section class="gulf" aria-label="Built for the GCC">
   <div class="gulf__scene" data-3d="skyline" data-base="${r}assets/img/dubai-gulf"></div>
   <div class="gulf__text wrap">
-    <p class="gulf__ar" lang="ar" dir="rtl">مرحباً بكم في <bdi dir="ltr">818 AI</bdi></p>
-    <p class="eyebrow">Dubai · UAE · GCC</p>
-    <h2>Built for Dubai <em>and the Gulf.</em></h2>
+    <p class="eyebrow">Dubai · GCC</p>
+    <h2>Built for <em>GCC.</em></h2>
     <p>Intelligent software and AI that fit how business really works across the UAE and the wider region.</p>
   </div>
 </section>`;
