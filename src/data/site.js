@@ -7,11 +7,13 @@ export const site = {
   name: '818 AI Agency',
   short: '818 AI',
   tagline: 'Intelligence. Engineered.',
-  /* PLACEHOLDERS: replace with your real details */
-  email: 'hello@818ai.com',
+  email: 'info@818aiagency.com',
   whatsapp: '',            // e.g. '971500000000' (country code + number, no + or spaces). Empty = button hidden
-  /* The contact form: leave empty to open the visitor's email app with the message filled in.
-     Or paste a form service URL (Formspree, Getform, Web3Forms ...) to receive the message directly. */
+  /* The contact form can work in three ways (the first one that is filled in wins):
+       1. formKey      - the free access key from web3forms.com. Messages arrive in the mailbox you registered there.
+       2. formEndpoint - the URL of another form service (Formspree, Getform ...).
+       3. both empty   - the visitor's email app opens with the message already written. */
+  formKey: '',
   formEndpoint: '',
 };
 

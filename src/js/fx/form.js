@@ -1,5 +1,6 @@
 /* Contact page: validation, character counter, copy-email buttons and sending.
-   - If site.formEndpoint is set (see src/data/site.js) the enquiry is POSTed there.
+   - If site.formKey is set (see src/data/site.js) the enquiry is sent through Web3Forms to your mailbox.
+   - Else, if site.formEndpoint is set, the enquiry is POSTed to that form service.
    - Otherwise the visitor's email app opens with the message already written. */
 import { $, $$ } from '../core/env.js';
 
@@ -12,7 +13,8 @@ export function initForm() {
 
   const form = $('#enquiryForm'); if (!form) return;
   const status = $('[data-status]', form), legal = $('[data-legal]', form), count = $('[data-count]', form);
-  const endpoint = form.dataset.endpoint, email = form.dataset.email;
+  const key = form.dataset.key, email = form.dataset.email;
+  const endpoint = key ? 'https://api.web3forms.com/submit' : (form.dataset.endpoint || '');
   legal.textContent = endpoint ? 'Your details are used only to reply to this enquiry.' : 'Sending opens your email app with your message ready to send.';
 
   const ps = new URLSearchParams(location.search).get('service');          // ?service=ai-receptionist pre-selects the service
@@ -54,8 +56,11 @@ export function initForm() {
     if (endpoint) {
       btn.disabled = true; status.className = 'form__status'; status.textContent = 'Sending…';
       try {
-        const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ ...d, service }) });
-        if (!res.ok) throw new Error(String(res.status));
+        const { website, ...fields } = d;                                  // the hidden anti-spam field is not sent
+        const data = key ? { access_key: key, subject: `New website enquiry: ${service}`, ...fields, service } : { ...fields, service };
+        const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(data) });
+        const out = await res.json().catch(() => ({}));
+        if (!res.ok || out.success === false) throw new Error(String(res.status));
         form.reset(); count.textContent = '0 characters';
         status.className = 'form__status is-ok'; status.textContent = 'Thank you. We have your enquiry and will reply by email soon.';
       } catch {

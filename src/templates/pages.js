@@ -569,7 +569,7 @@ export function contact() {
         </ul>
       </div>
 
-      <div class="card-wrap reveal"><form class="card form geo" id="enquiryForm" novalidate data-endpoint="${esc(site.formEndpoint)}" data-email="${site.email}">
+      <div class="card-wrap reveal"><form class="card form geo" id="enquiryForm" novalidate data-endpoint="${esc(site.formEndpoint)}" data-key="${esc(site.formKey || '')}" data-email="${site.email}">
         <p class="eyebrow">Project enquiry</p>
         <h2 class="form__title">Tell us what you have in mind.</h2>
         <p class="form__hint">Fields marked with * are required.</p>
