@@ -1,14 +1,24 @@
 /* Pieces that appear on every page: <head>, background layers, menu, footer, Dubai band. */
 import { site, services, regions } from '../data/site.js';
 import { sprite, icon } from './icons.js';
+import { seoHead, iconLinks } from './seo.js';
+
+/* "?v=abc123" added to app.js, styles.css and bg-image.js. build.mjs fills it in from the file contents,
+   so a visitor's browser can keep these files for a long time and still gets the new one right after every change. */
+const FONTS = 'https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&family=Cairo:wght@600;700&display=swap';
+const ver = f => (globalThis.ASSET_VER && globalThis.ASSET_VER[f] ? `?v=${globalThis.ASSET_VER[f]}` : '');
 
 export const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 export const arrowBtn = (href, label, cls = 'btn--outline', extra = '') =>
   `<a class="btn ${cls} magnetic" href="${href}"${extra}><span>${label}</span>${icon('arrow', 'arr')}</a>`;
 
-/** Wraps a page body in the common shell. r = path back to the site root ('' or '../') */
-export function layout({ r = '', title, desc, active = '', body, pageClass = '' }) {
-  const full = title === site.name ? title : `${title} | ${site.name}`;
+/** Wraps a page body in the common shell.
+    r        = path back to the site root ('' or '../')
+    path     = this page's file name inside site/ ('index.html', 'about.html', 'services/ai-automation.html'), used for the canonical link
+    fullTitle= the complete <title>; when left out it becomes "<title> | 818 AI Agency"
+    kind     = 'home' | 'about' | 'contact' | 'services' | 'service' (decides which structured data is written)  */
+export function layout({ r = '', title, fullTitle, desc, path = 'index.html', kind = 'home', service, active = '', body, pageClass = '' }) {
+  const full = fullTitle || (title === site.name ? title : `${title} | ${site.name}`);
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -16,12 +26,14 @@ export function layout({ r = '', title, desc, active = '', body, pageClass = '' 
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${esc(full)}</title>
 <meta name="description" content="${esc(desc)}">
+${seoHead({ full, desc, path, kind, service })}
 <meta name="theme-color" content="#030814">
-<link rel="icon" href="${r}assets/img/logo.jpg">
+${iconLinks(r)}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&family=Cairo:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="${r}assets/styles.css">
+<link rel="preload" as="style" href="${FONTS}" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="${FONTS}"></noscript>
+<link rel="stylesheet" href="${r}assets/styles.css${ver('styles.css')}">
 </head>
 <body class="${pageClass}">
 ${sprite()}
@@ -41,8 +53,8 @@ ${body}
 ${gulfBand(r)}
 ${footer(r)}
 
-<script src="${r}assets/bg-image.js"></script>
-<script src="${r}assets/app.js" defer></script>
+<script src="${r}assets/bg-image.js${ver('bg-image.js')}" defer></script>
+<script src="${r}assets/app.js${ver('app.js')}" defer></script>
 </body>
 </html>
 `;

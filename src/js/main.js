@@ -29,9 +29,10 @@ import { createHeroFxView } from './gl/herofx.js';
 
 root.classList.add('js');
 
-/* ---- page effects ---- */
+/* ---- page effects (these are light, so the text is on screen straight away) ---- */
 initChrome(); initReveal(); initDepth(); initHub(); initStack(); initFrames(); initParallax();
 initTilt(); initMagnetic(); initGlow(); initSliders(); initChat(); initVoice(); initForm();
+start();
 
 /* ---- 3D: one canvas, many scenes ---- */
 function useFallback() {
@@ -65,6 +66,6 @@ function initGL() {
   add({ measure: stage.measure, update: stage.render });
   window.__stage = stage;                                          // handy for debugging in the console
 }
-initGL();
-
-start();
+/* The 3D scenes are the heavy part. Let the browser paint the page first, then build them:
+   visitors (and Google) see the content sooner, and the 3D fades in a moment later. */
+requestAnimationFrame(() => setTimeout(initGL, 0));

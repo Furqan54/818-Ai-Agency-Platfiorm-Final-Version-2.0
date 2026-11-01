@@ -19,7 +19,7 @@ export function home() {
       <h3>${esc(s.title)}</h3>
       <p>${esc(s.card)}</p>
       <p class="svc__point"><i></i>${esc(s.point)}</p>
-      <a class="svc__more" href="${svcHref(r, s)}"><span>Learn more</span>${icon('arrow', 'arr')}</a>
+      <a class="svc__more" href="${svcHref(r, s)}"><span>Learn more<span class="sr-only"> about ${esc(s.title)}</span></span>${icon('arrow', 'arr')}</a>
     </article>`;
   const mini = (side, title, ic, text) => `<article class="card-wrap" data-fly data-side="${side}"><div class="card mini" data-tilt>
         <div class="mini__row"><h3>${title}</h3>${icon(ic)}</div><p>${text}</p></div></article>`;
@@ -126,7 +126,11 @@ export function home() {
 
   ${ctaCard(r, 'contact')}`;
 
-  return layout({ r, title: site.name, desc: '818 AI Agency. Intelligence, engineered. An AI receptionist, AI solutions, automation, custom software, CRM integrations and web development for businesses in Dubai, the UAE and the GCC.', active: 'home', body, pageClass: 'page-home' });
+  return layout({
+    r, title: site.name, path: 'index.html', kind: 'home',
+    fullTitle: '818 AI Agency | AI Receptionist, Automation & Software in Dubai',
+    desc: '818 AI Agency builds AI receptionists, automation, custom software, CRM integrations and websites for businesses in Dubai, the UAE and the GCC.',
+    active: 'home', body, pageClass: 'page-home' });
 }
 
 const stepViz = {
@@ -220,7 +224,7 @@ export function about() {
   </section>
 
   ${ctaCard(r)}`;
-  return layout({ r, title: 'About', desc: '818 AI is a technology company helping businesses in Dubai, the UAE and the GCC use AI, software and digital systems to operate smarter and grow faster.', active: 'about', body });
+  return layout({ r, title: 'About', fullTitle: 'About 818 AI Agency | AI & Software Company in Dubai', path: 'about.html', kind: 'about', desc: '818 AI is a technology company helping businesses in Dubai, the UAE and the GCC use AI, software and digital systems to operate smarter and grow faster.', active: 'about', body });
 }
 
 const sliderBar = () => `<div class="slider__bar">
@@ -314,7 +318,7 @@ export function servicesPage() {
   </section>
 
   ${ctaCard(r)}`;
-  return layout({ r, title: 'Services', desc: 'AI Receptionist, AI Solutions, AI Automation, AI Tools & Agents, Custom Software, Web Development and CRM & Integrations from 818 AI.', active: 'services', body });
+  return layout({ r, title: 'Services', fullTitle: 'AI, Automation & Software Services | 818 AI Agency', path: 'services.html', kind: 'services', desc: 'AI Receptionist, AI Solutions, AI Automation, AI Tools & Agents, Custom Software, Web Development and CRM & Integrations from 818 AI.', active: 'services', body });
 }
 
 function flowViz() {
@@ -430,7 +434,7 @@ export function servicePage(s, i) {
       <a class="svcnav__a svcnav__a--next" href="${next.slug}.html"><span><small>Next service</small><b>${esc(next.title)}</b></span>${icon('arrow-right')}</a>
     </nav>
   </section>`;
-  return layout({ r, title: s.title, desc: `${s.tagline} ${s.intro}`.slice(0, 200), active: 'services', body });
+  return layout({ r, title: s.seoTitle || s.title, path: `services/${s.slug}.html`, kind: 'service', service: s, desc: s.seo || s.tagline, active: 'services', body });
 }
 
 /* ---- AI Receptionist: channel cards + a live chat you can try ---- */
@@ -598,5 +602,5 @@ export function contact() {
     <div><p class="eyebrow">818 AI</p><h2>Every good project starts <em>somewhere.</em></h2></div>
     <a class="strip__link" href="#enquiry">Start with an idea ${icon('arrow', 'arr')}</a>
   </section>`;
-  return layout({ r, title: 'Contact', desc: 'Tell 818 AI about your project. AI receptionist, automation, software, CRM and web development for businesses in Dubai and the GCC.', active: 'contact', body, pageClass: 'page-contact' });
+  return layout({ r, title: 'Contact', fullTitle: 'Contact 818 AI Agency | Book a Consultation', path: 'contact.html', kind: 'contact', desc: 'Tell 818 AI about your project. AI receptionist, automation, software, CRM and web development for businesses in Dubai and the GCC.', active: 'contact', body, pageClass: 'page-contact' });
 }

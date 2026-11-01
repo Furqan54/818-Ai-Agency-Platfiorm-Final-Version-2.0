@@ -329,6 +329,8 @@ em {                                   /* the cyan emphasis line, as on the curr
 .svc p { font-size: .84rem; line-height: 1.55; transform: translateZ(12px); }
 .svc .svc__point { display: flex; align-items: center; gap: .55rem; color: var(--ink); font-weight: 600; font-size: .78rem; }
 .svc__point i { width: 6px; height: 6px; border-radius: 50%; background: var(--neon); box-shadow: 0 0 10px var(--neon); flex: none; }
+/* text for screen readers and search engines only (not shown) */
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .svc__more {
   display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: .4rem;
   font: 500 .62rem/1 var(--font-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-2);

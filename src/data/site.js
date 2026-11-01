@@ -8,6 +8,13 @@ export const site = {
   short: '818 AI',
   tagline: 'Intelligence. Engineered.',
   email: 'info@818aiagency.com',
+  /* ---- Search engines (SEO) ---- */
+  url: 'https://818aiagency.com',                 // the real address of the site, no slash at the end
+  description: 'AI receptionists, automation, custom software, CRM integrations and web development for businesses in Dubai, the UAE and the GCC.',
+  ogImage: 'assets/img/og-image.jpg',             // 1200 x 630 picture shown when a link is shared (WhatsApp, LinkedIn ...)
+  /* Official profiles of the business, full links, e.g. 'https://www.linkedin.com/company/...'.
+     Leave empty until the pages exist. Anything listed here is added to the page data that Google reads. */
+  social: [],
   whatsapp: '',            // e.g. '971500000000' (country code + number, no + or spaces). Empty = button hidden
   /* The contact form can work in three ways (the first one that is filled in wins):
        1. formKey      - the free access key from web3forms.com. Messages arrive in the mailbox you registered there.
@@ -36,6 +43,8 @@ export const services = [
     card: 'An always-on receptionist that answers calls, WhatsApp, email and chat, books appointments and hands over to your team.',
     point: 'Never miss an enquiry again',
     tagline: 'An always-on receptionist that answers, qualifies and books, so no enquiry goes unanswered.',
+    seoTitle: 'AI Receptionist in Dubai & UAE',
+    seo: 'AI Receptionist for businesses in Dubai and the UAE. It answers calls, WhatsApp, email and chat, books appointments and hands over to your team.',
     intro: 'Our AI Receptionist answers incoming calls, WhatsApp messages, emails and website chats on behalf of your business. It gives clear answers, captures lead details, books appointments and passes complex conversations to your team, day and night.',
     buildTitle: 'One receptionist, every channel',
     build: [
@@ -75,6 +84,8 @@ export const services = [
     card: 'Practical AI solutions that help businesses improve everyday operations, solve problems, and work more efficiently.',
     point: 'Put AI to work for your business',
     tagline: 'Practical AI capabilities built around defined business requirements.',
+    seoTitle: 'AI Solutions for Business',
+    seo: 'Practical AI solutions built around your workflows, information and existing tools. We find the right use cases and plan AI that fits your business.',
     intro: 'We identify suitable AI use cases and plan solutions around your workflows, information, and existing tools.',
     buildTitle: 'Designed around your requirements',
     build: [
@@ -107,6 +118,8 @@ export const services = [
     card: 'Automate repetitive tasks and business workflows to reduce manual effort, save time, and improve productivity.',
     point: 'Reduce repetitive manual work',
     tagline: 'Remove repetitive work by automating the steps that slow your team down.',
+    seoTitle: 'AI Automation for Business',
+    seo: 'Remove repetitive work with AI automation: data entry, follow-ups, notifications and hand-offs, so your team can focus on work that needs people.',
     intro: 'We map how work moves through your business, then automate the repeatable parts, such as data entry, follow-ups, notifications and hand-offs, so your team can focus on the work that needs people.',
     buildTitle: 'Designed around your requirements',
     build: [
@@ -139,6 +152,8 @@ export const services = [
     card: 'AI-powered tools and agents that assist with business tasks, information handling, and everyday workflows.',
     point: 'Extend what your team can do',
     tagline: 'AI-powered tools and agents that assist with tasks, information and everyday workflows.',
+    seoTitle: 'AI Agents & AI Tools for Teams',
+    seo: 'AI agents and internal tools that research, draft, summarise, look up information and take supported actions across the tools your team already uses.',
     intro: 'We build AI agents and internal tools that can research, draft, summarise, look up information and take supported actions across the tools your team already uses.',
     buildTitle: 'Designed around your requirements',
     build: [
@@ -171,6 +186,8 @@ export const services = [
     card: 'Purpose-built software designed around your business requirements, workflows, and operational challenges.',
     point: 'Software built around your needs',
     tagline: 'Purpose-built software shaped around the way your business operates.',
+    seoTitle: 'Custom Software Development',
+    seo: 'Custom software built around the way your business operates, with functionality designed to agreed requirements when standard tools do not fit.',
     intro: 'When standard tools do not fit a business process, custom software can provide functionality designed around agreed requirements.',
     buildTitle: 'Designed around your requirements',
     build: [
@@ -203,6 +220,8 @@ export const services = [
     card: 'Professional, responsive websites built to present your business clearly and deliver better digital experiences.',
     point: 'Build your online presence',
     tagline: 'Custom websites designed around your business, your customers, and your next stage of growth.',
+    seoTitle: 'Web Development for Dubai & GCC Businesses',
+    seo: 'Responsive business websites built around your brand and customers, with optional AI features, automation, integrations and interactive visuals.',
     intro: 'We build responsive business websites that bring your brand, services, and customer journey together in one clear digital experience. Depending on your requirements, a website can also include suitable AI features, automation workflows, third-party integrations, and interactive visual experiences.',
     buildTitle: 'Designed around your requirements',
     build: [
@@ -248,6 +267,8 @@ export const services = [
     card: 'Connect customer information, business tools, and systems to create smoother, more coordinated workflows.',
     point: 'Keep business systems connected',
     tagline: 'Connect customer information and business tools to create a more organised workflow.',
+    seoTitle: 'CRM & Business Integrations',
+    seo: 'CRM and integrations that organise customer records, track enquiries and connect your supported applications around your current tools and processes.',
     intro: 'We help businesses organise customer records, track enquiries, and connect supported applications. The solution is planned around your current tools and processes rather than assuming every business needs the same CRM or integration setup.',
     buildTitle: 'Designed around your requirements',
     build: [
