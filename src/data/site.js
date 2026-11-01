@@ -13,7 +13,7 @@ export const site = {
        1. formKey      - the free access key from web3forms.com. Messages arrive in the mailbox you registered there.
        2. formEndpoint - the URL of another form service (Formspree, Getform ...).
        3. both empty   - the visitor's email app opens with the message already written. */
-  formKey: '',
+  formKey: '7039fdcc-5972-4dd3-8311-8e616ddfb053',
   formEndpoint: '',
 };
 
